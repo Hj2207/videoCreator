@@ -1,4 +1,5 @@
 var videoShow = require("videoshow");
+const concat = require('ffmpeg-concat')
 
 var images = [
     {
@@ -31,7 +32,7 @@ var images = [
     pixelFormat: "yuv420p",
   };
 
-  videoShow(images,videoOptions)
+ videoShow(images,videoOptions)
   .audio("test.mp3")
 .save("slideshow.mp4")
 .on('start',function(command){
@@ -42,4 +43,23 @@ var images = [
 })
 .on('end',function(output){
     console.log("Conversion completed" + output)
+    finalFunc();
 })
+
+
+
+// concat 2 mp4s together using 2 500ms directionalWipe transitions
+const finalFunc = async() => {
+    await concat({
+        output: 'test.mp4',
+        videos: [
+          'videoplayback.mp4',
+          'slideshow.mp4',
+          
+        ],
+        transition: {
+          name: 'directionalWipe',
+          duration: 500
+        }
+      })
+}
